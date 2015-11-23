@@ -1,0 +1,144 @@
+
+
+
+
+
+<!DOCTYPE html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Peer Grading and Review System</title>
+  <link href="{{ url_for('static', filename='css/materialize.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{{ url_for('static', filename='css/style.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+
+<!--Header-->
+
+<nav class="z-depth-0 white" role="navigation" style="padding-top:0.5%;">
+    <div class="nav-wrapper container"><img src="{{ url_for('static', filename='img/image.jpeg') }}" height=60 width=60 style="margin:4px;"></img><a id="logo-container" href="{{ url_for('show_entries') }}" class="brand-logo" style="color:teal; font-family:Tahoma, Geneva, sans-serif;">IIT Bombay</a>
+      <ul class="right hide-on-med-and-down">
+        <div class=metanav>
+          {% if not session.logged_in %}
+          <a href="{{ url_for('login') }}" style="color:teal;"><b>LOG IN</b></a>
+          {% else %}
+          <a href="{{ url_for('logout') }}" style="color:teal;"><b>LOG OUT</b> >> {{ session['name'] }}   </a>
+
+          {% endif %}
+        </div>
+      </ul>
+
+      <ul id="nav-mobile" class="side-nav">
+        <li><a href="#">Navbar Link</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+</nav>
+
+
+<div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h1 class="header center orange-text">CS682 Project</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">A collaborative grading and review system for the students of IIT Bombay.</h5>
+      </div>
+    </div>
+</div>
+
+<div class="row" class="center-align" style="padding-left:10%; padding-right:10%;">
+
+      <div class="col s3 m3 l3">
+      
+      {% if session.privilege=='student' %}
+      <div class="collection">
+        <a href="{{ url_for('show_entries') }}" class="collection-item" >Discussion</a>
+        <a href="{{ url_for('grade_peers') }}" class="collection-item active">Grade Your Peers</a>
+      </div>
+      {% endif %}
+
+      {% if session.privilege=='admin' %}
+      <div class="collection">
+        <a href="{{ url_for('show_entries') }}" class="collection-item active" >Discussion</a>
+        <a href="{{ url_for('manage_users') }}" class="collection-item">Add/Remove User</a>
+      </div>
+      {% endif %}
+
+      {% if session.privilege=='instructor' %}
+      <div class="collection">
+        <a href="{{ url_for('show_entries') }}" class="collection-item" >Discussion</a>
+        <a href="{{ url_for('grade_peers') }}" class="collection-item active">Grade Your Students</a>
+        <a href="{{ url_for('show_all_grades') }}" class="collection-item">View All Grades</a>
+        <a href="{{ url_for('grading_tasks') }}" class="collection-item">Manage Grading Tasks</a>
+        <a href="{{ url_for('grading_stats') }}" class="collection-item">Grading Statistics</a>
+      </div>
+      {% endif %}
+    
+      </div>
+
+      <div class="col l9 m9 s9">
+        
+  <div class="card-panel teal z-depth-0">
+    {% block body %}
+    
+<form action="{{ url_for('add_grade') }}" method=post>
+<b>TASK :</b> <br/>
+<select name="task" class="browser-default">
+{% for row in entries %}
+<option value="{{row}}">{{row}}</option>
+{% endfor %}
+</select>
+<br/>
+<dl>
+      <dt>NAME OF STUDENT:
+      <dd><select name="receiver" class="browser-default">
+        {% for row in students %}
+        <option value="{{row}}">{{row}}</option>
+        {% endfor %}
+        </select><br/>
+      <dt>GRADES RECEIVED:
+      <dd><select name="grade" class="browser-default">
+        {% for row in grades %}
+        <option value="{{row}}">{{row}}</option>
+        {% endfor %}
+        </select><br/>
+      <dt>Review Remarks:
+      <dd><input type=text name="review" class="input-field" style="text:#fff; box-shadow: 0 1px 0 0 #fff;"><br/><br/><br/>
+      <dd><input class="btn waves-effect waves-light" type="submit" value="Submit" style="background:#fff; color:#000; margin-left:10px;">
+</dl>
+</form>
+
+
+    {% endblock %}
+ 
+</div>
+      </div>
+      </div>
+
+
+<footer class="page-footer orange">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Objective of the WebApp</h5>
+          <p class="grey-text text-lighten-4">This project is a course project and is not adequately tested for scale or effeciency to be deployed as a production system. For any queries, contact the developers.</p>
+
+
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      <b>Made by:</b> Vaibhav Tripathi, Prerana Singhal
+      </div>
+    </div>
+</footer>
+
+</html>
+    
+
+ 
+
+    
+
+ 

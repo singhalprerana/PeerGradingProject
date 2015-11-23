@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block body %}
+  <H5 style="color:#fff; margin:10%;">All your discussions go here.</H5>
+  {% if session.logged_in %}
+    <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
+      <!--<dl>
+        <dt>Your Name:
+        <dd><input type=text size=30 name=title>
+        <dt>Your Feedback:
+        <dd><textarea name=text rows=5 cols=40></textarea>
+        <dd>
+      </dl>-->
+      <div class="row">
+        <div class="input-field col s12">
+          <textarea id="textarea1" class="materialize-textarea" name="text" style="text:#fff; box-shadow: 0 1px 0 0 #fff;"></textarea>
+          <label class="active" for="textarea1" style="color:orange; font-size:20px">Your Message</label>
+        </div>
+      </div>
+      <div class="row">
+        <input class="btn waves-effect waves-light" type="submit" value="POST" style="background:orange; color:#000; margin-left:10px;">
+      </div>
+    </form>
+  {% endif %}
+
+  
+  {% for entry in entries %}
+
+    <div class="row">
+        <div class="col s12">
+          <div class="card white">
+            <div class="card-content grey-text">
+              <span class="card-title" style="color:orange;">{{ entry.title }}</span>
+              <p>{{ entry.text|safe }}</p>
+            </div>
+            <div class="card-action">
+              {{ entry.datetime|safe }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em>
+  {% endfor %}
+ 
+{% endblock %}
+

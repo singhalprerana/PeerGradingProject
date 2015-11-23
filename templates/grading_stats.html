@@ -1,0 +1,191 @@
+
+
+  <!DOCTYPE html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Peer Grading and Review System</title>
+  <link href="{{ url_for('static', filename='css/materialize.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{{ url_for('static', filename='css/style.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+
+<!--Header-->
+
+<nav class="z-depth-0 white" role="navigation" style="padding-top:0.5%;">
+    <div class="nav-wrapper container"><img src="{{ url_for('static', filename='img/image.jpeg') }}" height=60 width=60 style="margin:4px;"></img><a id="logo-container" href="{{ url_for('show_entries') }}" class="brand-logo" style="color:teal; font-family:Tahoma, Geneva, sans-serif;">IIT Bombay</a>
+      <ul class="right hide-on-med-and-down">
+        <div class=metanav>
+          {% if not session.logged_in %}
+          <a href="{{ url_for('login') }}" style="color:teal;"><b>LOG IN</b></a>
+          {% else %}
+          <a href="{{ url_for('logout') }}" style="color:teal;"><b>LOG OUT</b> >> {{ session['name'] }}   </a>
+
+          {% endif %}
+        </div>
+      </ul>
+
+      <ul id="nav-mobile" class="side-nav">
+        <li><a href="#">Navbar Link</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+</nav>
+
+
+<div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h1 class="header center orange-text">CS682 Project</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">A collaborative grading and review system for the students of IIT Bombay.</h5>
+      </div>
+    </div>
+</div>
+
+<div class="row" class="center-align" style="padding-left:10%; padding-right:10%;">
+
+      <div class="col s3 m3 l3">
+      
+      {% if session.privilege=='student' %}
+      <div class="collection">
+        <a href="{{ url_for('show_entries') }}" class="collection-item active" >Discussion</a>
+        <a href="{{ url_for('grade_peers') }}" class="collection-item">Grade Your Peers</a>
+      </div>
+      {% endif %}
+
+      {% if session.privilege=='admin' %}
+      <div class="collection">
+        <a href="{{ url_for('show_entries') }}" class="collection-item active" >Discussion</a>
+        <a href="{{ url_for('manage_users') }}" class="collection-item">Add/Remove User</a>
+      </div>
+      {% endif %}
+
+      {% if session.privilege=='instructor' %}
+      <div class="collection">
+        <a href="{{ url_for('show_entries') }}" class="collection-item" >Discussion</a>
+        <a href="{{ url_for('grade_peers') }}" class="collection-item">Grade Your Students</a>
+        <a href="{{ url_for('show_all_grades') }}" class="collection-item">View All Grades</a>
+        <a href="{{ url_for('grading_tasks') }}" class="collection-item">Manage Grading Tasks</a>
+        <a href="{{ url_for('grading_stats') }}" class="collection-item active">Grading Statistics</a>
+      </div>
+      {% endif %}
+    
+      </div>
+
+      <div class="col l9 m9 s9">
+        
+  <div class="card-panel teal z-depth-0">
+    {% block body %}
+
+    
+
+
+    <script src="//canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script type="text/javascript">
+
+window.onload = function () {
+  var chart = new CanvasJS.Chart("chartContainer", {
+    theme: "theme2",//theme1
+    title:{
+      text: "Overall"              
+    },
+    animationEnabled: false,   // change to true
+    data: [              
+    {
+      // Change type to "bar", "area", "spline", "pie",etc.
+      type: "column",
+      dataPoints: [
+        {% for row in grades %}
+    { label: "{{row[0]}}", y: {{row[1]}} },
+    {% endfor %}
+      ]
+    }
+    ]
+  });
+
+
+
+{% for key in twg %}
+
+
+var chart{{key[:3]}} = new CanvasJS.Chart("chart{{key}}", {
+    theme: "theme2",//theme1
+    title:{
+      text: "{{key}}"              
+    },
+    animationEnabled: false,   // change to true
+    data: [              
+    {
+      // Change type to "bar", "area", "spline", "pie",etc.
+      type: "column",
+      dataPoints: [
+    {% for row in twg[key] %}
+    { label: "{{row[0]}}", y: {{row[1]}} },
+    {% endfor %}
+      ]
+    }
+    ]
+  });
+
+    
+    {% endfor %}
+
+
+
+
+  chart.render();
+  {% for key in twg %}
+
+  chart{{key[:3]}}.render();
+
+  {% endfor %}
+}
+</script>
+
+
+
+<h4> <b> <br/> OVERALL GRADING STATISTICS :: </b> </h4>
+<div id="chartContainer" style="height: 300px; width: 100%; margin-top:5%;"></div>
+
+<h4> <b> <br/><br/> TASKWISE GRADING STATISTICS :: </b> </h4>
+
+{% for key in twg %}
+
+<div id="chart{{key}}" style="height: 300px; width: 100%; margin-top:5%;"></div>
+
+
+  {% endfor %}
+
+
+
+
+
+    {% endblock %}
+ 
+</div>
+      </div>
+
+    </div>
+
+
+<footer class="page-footer orange">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Objective of the WebApp</h5>
+          <p class="grey-text text-lighten-4">This project is a course project and is not adequately tested for scale or effeciency to be deployed as a production system. For any queries, contact the developers.</p>
+
+
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      <b>Made by:</b> Vaibhav Tripathi, Prerana Singhal
+      </div>
+    </div>
+</footer>
+
+</html>
